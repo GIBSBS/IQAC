@@ -172,12 +172,8 @@
           </div>
           <div class="card-body p-4 p-md-5">
 
-            <!-- FORM DIRECTED TO YOUR EMAIL VIA FORMSUBMIT -->
-            <form action="https://script.google.com/macros/library/d/1fa3WyCpevJZ2--6B6QPZz6co1KA57BUuVCvmhe4oFwor80heNS5OYDsQ/1" method="POST" enctype="multipart/form-data">
-
-              <!-- Form Configuration Options -->
-              <input type="hidden" name="_subject" value="New Faculty Accomplishment Submission">
-              <input type="hidden" name="_template" value="table">
+            <!-- FORM CONNECTED TO GOOGLE APPS SCRIPT -->
+            <form id="accomplishmentForm">
 
               <!-- Section 1: Basic Information -->
               <div class="form-section-title">
@@ -251,6 +247,9 @@
                 </div>
               </div>
 
+              <!-- Status Alert Box -->
+              <div id="responseAlert" class="alert d-none mb-3" role="alert"></div>
+
               <!-- Submit Button -->
               <div class="text-end pt-3">
                 <button type="submit" id="submitBtn" class="btn btn-gibs btn-lg">
@@ -269,6 +268,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_IXVz04ptghcwX5VtKTyhvV80Tte2E2Xr-xg4Kc5DACzsO7sXXJTnm_JN9F436pBjqQ/exec";
+
     const categoriesAfter = [
       "Additional Achievement (Certificate of Appreciation & Participation)",
       "Awards and Recognition (Government / Non-Government / Best Paper / Best Professor)",
@@ -365,7 +366,7 @@
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Indexing Status (Scopus / Web of Science / UGC CARE / Other)</label>
-            <input type="text" name="Indexing Status" id="dynIssuingBody" class="form-control" placeholder="e.g. Scopus Indexed, Q1 Journal">
+            <input type="text" name="Indexing Status" id="dynRefId" class="form-control" placeholder="e.g. Scopus Indexed, Q1 Journal">
           </div>
         `;
       } else if (cat.includes("FDP") || cat.includes("Workshop") || cat.includes("Conference") || cat.includes("Webinar") || cat.includes("Course")) {
@@ -384,7 +385,7 @@
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Duration / Location</label>
-            <input type="text" name="Duration/Location" id="dynIssuingBody" class="form-control" placeholder="e.g. 5 Days, Online / Offline">
+            <input type="text" name="Duration/Location" id="dynRefId" class="form-control" placeholder="e.g. 5 Days, Online / Offline">
           </div>
         `;
       } else {
@@ -403,7 +404,7 @@
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Reference / Registration / Certificate ID</label>
-            <input type="text" name="Reference ID" id="dynIssuingBody" class="form-control" placeholder="Certificate / Ref Number">
+            <input type="text" name="Reference ID" id="dynRefId" class="form-control" placeholder="Certificate / Ref Number">
           </div>
         `;
       }
@@ -411,12 +412,77 @@
       fieldsHTML += `
         <div class="col-md-12">
           <label class="form-label fw-semibold">Brief Summary / Additional Remarks</label>
-          <textarea name="Remarks/Summary" id="dynDescription" class="form-control" rows="3" placeholder="Provide key highlights, impact, or summary details..."></textarea>
+          <textarea name="Remarks/Summary" id="dynSummary" class="form-control" rows="3" placeholder="Provide key highlights, impact, or summary details..."></textarea>
         </div>
       `;
 
       container.innerHTML = fieldsHTML;
     }
+
+    // Submit Handler to Apps Script
+    document.getElementById('accomplishmentForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('submitBtn');
+      const alertBox = document.getElementById('responseAlert');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Submitting & Uploading File...';
+
+      const fileInput = document.getElementById('documentProof');
+      let fileData = null;
+      let fileName = "";
+      let fileType = "";
+
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        fileName = file.name;
+        fileType = file.type;
+        fileData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const payload = {
+        facultyName: document.getElementById('facultyName').value,
+        facultyEmail: document.getElementById('facultyEmail').value,
+        department: document.getElementById('department').value,
+        tenurePhase: document.getElementById('tenurePhase').value,
+        criteriaCategory: document.getElementById('criteriaCategory').value,
+        title: document.getElementById('dynTitle') ? document.getElementById('dynTitle').value : '',
+        publisher: document.getElementById('dynPublisher') ? document.getElementById('dynPublisher').value : '',
+        date: document.getElementById('dynDate') ? document.getElementById('dynDate').value : '',
+        refId: document.getElementById('dynRefId') ? document.getElementById('dynRefId').value : '',
+        summary: document.getElementById('dynSummary') ? document.getElementById('dynSummary').value : '',
+        fileName: fileName,
+        fileType: fileType,
+        fileData: fileData
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        alertBox.className = "alert alert-success";
+        alertBox.textContent = "Accomplishment and PDF successfully submitted to Google Sheet!";
+        alertBox.classList.remove('d-none');
+        document.getElementById('accomplishmentForm').reset();
+        updateCategories();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Accomplishment Details';
+      })
+      .catch(err => {
+        alertBox.className = "alert alert-danger";
+        alertBox.textContent = "Error submitting form. Please try again.";
+        alertBox.classList.remove('d-none');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Accomplishment Details';
+      });
+    });
 
     // Initial setup on load
     window.onload = () => {
