@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GIBS Faculty Accomplishment Entry Portal</title>
+  <title>GIBS Faculty Accomplishment Details</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -141,34 +141,6 @@
       border-radius: 0 4px 4px 0;
       margin-top: 6px;
     }
-
-    /* Modal styling */
-    .modal-header-gibs {
-      background: var(--gibs-black);
-      color: white;
-      border-bottom: 3px solid var(--gibs-red);
-    }
-
-    .code-block {
-      background: #1E1E1E;
-      color: #D4D4D4;
-      padding: 15px;
-      border-radius: 8px;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.85rem;
-      max-height: 350px;
-      overflow-y: auto;
-    }
-
-    .config-gear {
-      color: rgba(255,255,255,0.6);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .config-gear:hover {
-      color: white;
-    }
   </style>
 </head>
 <body>
@@ -183,9 +155,6 @@
           <p class="institute-sub">Bangalore, India</p>
           <div class="tagline">LEARN ♦ EARN ♦ RETURN</div>
         </div>
-      </div>
-      <div>
-        <i class="fas fa-cog fa-lg config-gear" data-bs-toggle="modal" data-bs-target="#settingsModal" title="Backend Script Settings"></i>
       </div>
     </div>
   </header>
@@ -203,9 +172,12 @@
           </div>
           <div class="card-body p-4 p-md-5">
 
-            <div id="alertBox"></div>
+            <!-- FORM DIRECTED TO YOUR EMAIL VIA FORMSUBMIT -->
+            <form action="https://formsubmit.co/praveen.gujjar@gibs.edu.in" method="POST" enctype="multipart/form-data">
 
-            <form id="accomplishmentForm" onsubmit="handleFormSubmit(event)">
+              <!-- Form Configuration Options -->
+              <input type="hidden" name="_subject" value="New Faculty Accomplishment Submission">
+              <input type="hidden" name="_template" value="table">
 
               <!-- Section 1: Basic Information -->
               <div class="form-section-title">
@@ -215,15 +187,15 @@
               <div class="row g-3 mb-4">
                 <div class="col-md-6">
                   <label class="form-label fw-semibold">Faculty Name <span class="text-danger">*</span></label>
-                  <input type="text" id="facultyName" class="form-control" placeholder="Dr. / Prof. Full Name" required>
+                  <input type="text" name="Faculty Name" id="facultyName" class="form-control" placeholder="Dr. / Prof. Full Name" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold">Faculty Email / Employee ID <span class="text-danger">*</span></label>
-                  <input type="email" id="facultyEmail" class="form-control" placeholder="faculty@gibs.edu.in" required>
+                  <input type="email" name="Faculty Email" id="facultyEmail" class="form-control" placeholder="faculty@gibs.edu.in" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold">Department / Program <span class="text-danger">*</span></label>
-                  <select id="department" class="form-select" required>
+                  <select name="Department" id="department" class="form-select" required>
                     <option value="">-- Select Department --</option>
                     <option value="MBA Department">MBA Department</option>
                     <option value="PGDM Department">PGDM Department</option>
@@ -234,7 +206,7 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold">Accomplishment Phase / Tenure <span class="text-danger">*</span></label>
-                  <select id="tenurePhase" class="form-select" onchange="updateCategories()" required>
+                  <select name="Tenure Phase" id="tenurePhase" class="form-select" onchange="updateCategories()" required>
                     <option value="After Joining GIBS">After Joining GIBS</option>
                     <option value="Before Joining GIBS">Before Joining GIBS (Prior Career Record)</option>
                   </select>
@@ -249,7 +221,7 @@
               <div class="row g-3 mb-4">
                 <div class="col-md-12">
                   <label class="form-label fw-semibold">Criteria / Category <span class="text-danger">*</span></label>
-                  <select id="criteriaCategory" class="form-select" onchange="renderDynamicFields()" required>
+                  <select name="Criteria Category" id="criteriaCategory" class="form-select" onchange="renderDynamicFields()" required>
                     <!-- Options populated dynamically -->
                   </select>
                 </div>
@@ -272,7 +244,7 @@
               <div class="row g-3 mb-4">
                 <div class="col-md-12">
                   <label class="form-label fw-semibold">Upload Supporting Certificate / Paper / Proof (PDF only) <span class="text-danger">*</span></label>
-                  <input type="file" id="documentProof" class="form-control" accept=".pdf" required>
+                  <input type="file" name="Attachment PDF" id="documentProof" class="form-control" accept=".pdf" required>
                   <div class="file-note">
                     <i class="fas fa-info-circle me-1"></i> Note: All supporting documents must be submitted in clear <strong>PDF format</strong> only. Screenshots or images are not accepted.
                   </div>
@@ -295,80 +267,8 @@
     </div>
   </main>
 
-  <!-- Backend Settings & Code Modal -->
-  <div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header modal-header-gibs">
-          <h5 class="modal-title"><i class="fas fa-cogs me-2"></i> Google Apps Script Integration Config</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body p-4">
-          <p class="text-muted">Enter your deployed Google Apps Script Web App URL below to automatically push submitted accomplishment details directly to your designated Google Sheet & Google Drive.</p>
-          
-          <div class="mb-4">
-            <label class="form-label fw-bold">Google Apps Script Web App URL:</label>
-            <input type="url" id="scriptUrlInput" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
-            <button class="btn btn-dark btn-sm mt-2" onclick="saveScriptUrl()"><i class="fas fa-save me-1"></i> Save Script URL</button>
-          </div>
-
-          <hr>
-
-          <h6 class="fw-bold"><i class="fas fa-code me-2"></i> Backend `Code.gs` Google Apps Script Code:</h6>
-          <p class="small text-muted mb-2">Paste this exact script inside your Google Sheets Extensions -> Apps Script editor:</p>
-          
-          <div class="code-block" id="appScriptCode">
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Save PDF to Google Drive if provided
-    var fileUrl = "";
-    if (data.fileData && data.fileName) {
-      var folderName = "GIBS_Faculty_Accomplishment_Docs";
-      var folders = DriveApp.getFoldersByName(folderName);
-      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
-      
-      var decoded = Utilities.base64Decode(data.fileData.split(",")[1]);
-      var blob = Utilities.newBlob(decoded, "application/pdf", data.fileName);
-      var file = folder.createFile(blob);
-      fileUrl = file.getUrl();
-    }
-    
-    // Append row to active sheet
-    sheet.appendRow([
-      new Date(),
-      data.facultyName,
-      data.facultyEmail,
-      data.department,
-      data.tenurePhase,
-      data.criteriaCategory,
-      data.title || "",
-      data.publisherOrg || "",
-      data.eventDate || "",
-      data.issuingBody || "",
-      data.description || "",
-      fileUrl
-    ]);
-    
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Record added successfully" }))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-          </div>
-          <button class="btn btn-outline-secondary btn-sm mt-2" onclick="copyCode()"><i class="fas fa-copy me-1"></i> Copy Code.gs</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // List of Categories
     const categoriesAfter = [
       "Additional Achievement (Certificate of Appreciation & Participation)",
       "Awards and Recognition (Government / Non-Government / Best Paper / Best Professor)",
@@ -453,57 +353,57 @@ function doPost(e) {
         fieldsHTML = `
           <div class="col-md-6">
             <label class="form-label fw-semibold">Title of Paper / Book / Patent <span class="text-danger">*</span></label>
-            <input type="text" id="dynTitle" class="form-control" placeholder="Enter full title" required>
+            <input type="text" name="Title" id="dynTitle" class="form-control" placeholder="Enter full title" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Journal / Publisher / Patent Office <span class="text-danger">*</span></label>
-            <input type="text" id="dynPublisher" class="form-control" placeholder="Publisher name, ISSN/ISBN, or Patent No." required>
+            <input type="text" name="Publisher/Journal" id="dynPublisher" class="form-control" placeholder="Publisher name, ISSN/ISBN, or Patent No." required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Date of Publication / Filing <span class="text-danger">*</span></label>
-            <input type="date" id="dynDate" class="form-control" required>
+            <input type="date" name="Date" id="dynDate" class="form-control" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Indexing Status (Scopus / Web of Science / UGC CARE / Other)</label>
-            <input type="text" id="dynIssuingBody" class="form-control" placeholder="e.g. Scopus Indexed, Q1 Journal">
+            <input type="text" name="Indexing Status" id="dynIssuingBody" class="form-control" placeholder="e.g. Scopus Indexed, Q1 Journal">
           </div>
         `;
       } else if (cat.includes("FDP") || cat.includes("Workshop") || cat.includes("Conference") || cat.includes("Webinar") || cat.includes("Course")) {
         fieldsHTML = `
           <div class="col-md-6">
             <label class="form-label fw-semibold">Event / Program / Course Title <span class="text-danger">*</span></label>
-            <input type="text" id="dynTitle" class="form-control" placeholder="Enter program title" required>
+            <input type="text" name="Event Title" id="dynTitle" class="form-control" placeholder="Enter program title" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Organizing Body / Institution / Platform <span class="text-danger">*</span></label>
-            <input type="text" id="dynPublisher" class="form-control" placeholder="e.g., IIM Bangalore, NPTEL, Coursera" required>
+            <input type="text" name="Organizing Body" id="dynPublisher" class="form-control" placeholder="e.g., IIM Bangalore, NPTEL, Coursera" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Event Date / Completion Date <span class="text-danger">*</span></label>
-            <input type="date" id="dynDate" class="form-control" required>
+            <input type="date" name="Event Date" id="dynDate" class="form-control" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Duration / Location</label>
-            <input type="text" id="dynIssuingBody" class="form-control" placeholder="e.g. 5 Days, Online / Offline">
+            <input type="text" name="Duration/Location" id="dynIssuingBody" class="form-control" placeholder="e.g. 5 Days, Online / Offline">
           </div>
         `;
       } else {
         fieldsHTML = `
           <div class="col-md-6">
             <label class="form-label fw-semibold">Accomplishment Title / Heading <span class="text-danger">*</span></label>
-            <input type="text" id="dynTitle" class="form-control" placeholder="Enter accomplishment title" required>
+            <input type="text" name="Accomplishment Title" id="dynTitle" class="form-control" placeholder="Enter accomplishment title" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Issuing Authority / Awarding Agency <span class="text-danger">*</span></label>
-            <input type="text" id="dynPublisher" class="form-control" placeholder="Organization name" required>
+            <input type="text" name="Issuing Authority" id="dynPublisher" class="form-control" placeholder="Organization name" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Date of Achievement / Event <span class="text-danger">*</span></label>
-            <input type="date" id="dynDate" class="form-control" required>
+            <input type="date" name="Date of Achievement" id="dynDate" class="form-control" required>
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Reference / Registration / Certificate ID</label>
-            <input type="text" id="dynIssuingBody" class="form-control" placeholder="Certificate / Ref Number">
+            <input type="text" name="Reference ID" id="dynIssuingBody" class="form-control" placeholder="Certificate / Ref Number">
           </div>
         `;
       }
@@ -511,109 +411,16 @@ function doPost(e) {
       fieldsHTML += `
         <div class="col-md-12">
           <label class="form-label fw-semibold">Brief Summary / Additional Remarks</label>
-          <textarea id="dynDescription" class="form-control" rows="3" placeholder="Provide key highlights, impact, or summary details..."></textarea>
+          <textarea name="Remarks/Summary" id="dynDescription" class="form-control" rows="3" placeholder="Provide key highlights, impact, or summary details..."></textarea>
         </div>
       `;
 
       container.innerHTML = fieldsHTML;
     }
 
-    async function handleFormSubmit(event) {
-      event.preventDefault();
-
-      const btn = document.getElementById('submitBtn');
-      const alertBox = document.getElementById('alertBox');
-      const scriptUrl = localStorage.getItem('gibs_script_url');
-
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Submitting Record...';
-
-      try {
-        const fileInput = document.getElementById('documentProof');
-        let fileData = "";
-        let fileName = "";
-
-        if (fileInput.files.length > 0) {
-          const file = fileInput.files[0];
-          fileName = file.name;
-          fileData = await convertFileToBase64(file);
-        }
-
-        const formData = {
-          facultyName: document.getElementById('facultyName').value,
-          facultyEmail: document.getElementById('facultyEmail').value,
-          department: document.getElementById('department').value,
-          tenurePhase: document.getElementById('tenurePhase').value,
-          criteriaCategory: document.getElementById('criteriaCategory').value,
-          title: document.getElementById('dynTitle') ? document.getElementById('dynTitle').value : '',
-          publisherOrg: document.getElementById('dynPublisher') ? document.getElementById('dynPublisher').value : '',
-          eventDate: document.getElementById('dynDate') ? document.getElementById('dynDate').value : '',
-          issuingBody: document.getElementById('dynIssuingBody') ? document.getElementById('dynIssuingBody').value : '',
-          description: document.getElementById('dynDescription') ? document.getElementById('dynDescription').value : '',
-          fileName: fileName,
-          fileData: fileData
-        };
-
-        if (scriptUrl) {
-          await fetch(scriptUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-          });
-        }
-
-        alertBox.innerHTML = `
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i> <strong>Submission Successful!</strong> Your accomplishment record has been recorded into the GIBS IQAC repository.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        `;
-
-        document.getElementById('accomplishmentForm').reset();
-        updateCategories();
-
-      } catch (err) {
-        alertBox.innerHTML = `
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i> <strong>Error!</strong> Unable to submit details. Please try again.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        `;
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Accomplishment Details';
-      }
-    }
-
-    function convertFileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-    }
-
-    function saveScriptUrl() {
-      const url = document.getElementById('scriptUrlInput').value;
-      localStorage.setItem('gibs_script_url', url);
-      alert('Google Apps Script URL saved successfully!');
-    }
-
-    function copyCode() {
-      const code = document.getElementById('appScriptCode').innerText;
-      navigator.clipboard.writeText(code);
-      alert('Apps Script Code copied to clipboard!');
-    }
-
     // Initial setup on load
     window.onload = () => {
       updateCategories();
-      const savedUrl = localStorage.getItem('gibs_script_url');
-      if (savedUrl) {
-        document.getElementById('scriptUrlInput').value = savedUrl;
-      }
     };
   </script>
 </body>
