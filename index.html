@@ -172,7 +172,6 @@
           </div>
           <div class="card-body p-4 p-md-5">
 
-            <!-- FORM CONNECTED TO GOOGLE APPS SCRIPT -->
             <form id="accomplishmentForm">
 
               <!-- Section 1: Basic Information -->
@@ -229,7 +228,7 @@
               </div>
 
               <div class="row g-3 mb-4" id="dynamicFieldsContainer">
-                <!-- Fields rendered dynamically based on chosen category -->
+                <!-- Dynamic input fields render here -->
               </div>
 
               <!-- Section 4: Document Proof Upload -->
@@ -242,7 +241,7 @@
                   <label class="form-label fw-semibold">Upload Supporting Certificate / Paper / Proof (PDF only) <span class="text-danger">*</span></label>
                   <input type="file" name="Attachment PDF" id="documentProof" class="form-control" accept=".pdf" required>
                   <div class="file-note">
-                    <i class="fas fa-info-circle me-1"></i> Note: All supporting documents must be submitted in clear <strong>PDF format</strong> only. Screenshots or images are not accepted.
+                    <i class="fas fa-info-circle me-1"></i> Note: All supporting documents must be submitted in clear <strong>PDF format</strong> only.
                   </div>
                 </div>
               </div>
@@ -268,7 +267,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_IXVz04ptghcwX5VtKTyhvV80Tte2E2Xr-xg4Kc5DACzsO7sXXJTnm_JN9F436pBjqQ/exec";
+    // PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL HERE
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytb1Z3s1u01G6hER-LgARWvPNWJQMU761f0-pYUJJ_8_FuOw6LRhX8s2pIrKAVASriHQ/exec";
 
     const categoriesAfter = [
       "Additional Achievement (Certificate of Appreciation & Participation)",
@@ -348,78 +348,87 @@
 
       if (!cat) return;
 
-      let fieldsHTML = '';
+      // Adaptive field labels based on chosen category context
+      let titleLabel = "Accomplishment / Activity Title";
+      let titlePlaceholder = "Enter title or heading";
 
-      if (cat.includes("Paper") || cat.includes("Book") || cat.includes("Journal") || cat.includes("Case Study") || cat.includes("Patent")) {
-        fieldsHTML = `
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Title of Paper / Book / Patent <span class="text-danger">*</span></label>
-            <input type="text" name="Title" id="dynTitle" class="form-control" placeholder="Enter full title" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Journal / Publisher / Patent Office <span class="text-danger">*</span></label>
-            <input type="text" name="Publisher/Journal" id="dynPublisher" class="form-control" placeholder="Publisher name, ISSN/ISBN, or Patent No." required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Date of Publication / Filing <span class="text-danger">*</span></label>
-            <input type="date" name="Date" id="dynDate" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Indexing Status (Scopus / Web of Science / UGC CARE / Other)</label>
-            <input type="text" name="Indexing Status" id="dynRefId" class="form-control" placeholder="e.g. Scopus Indexed, Q1 Journal">
-          </div>
-        `;
-      } else if (cat.includes("FDP") || cat.includes("Workshop") || cat.includes("Conference") || cat.includes("Webinar") || cat.includes("Course")) {
-        fieldsHTML = `
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Event / Program / Course Title <span class="text-danger">*</span></label>
-            <input type="text" name="Event Title" id="dynTitle" class="form-control" placeholder="Enter program title" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Organizing Body / Institution / Platform <span class="text-danger">*</span></label>
-            <input type="text" name="Organizing Body" id="dynPublisher" class="form-control" placeholder="e.g., IIM Bangalore, NPTEL, Coursera" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Event Date / Completion Date <span class="text-danger">*</span></label>
-            <input type="date" name="Event Date" id="dynDate" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Duration / Location</label>
-            <input type="text" name="Duration/Location" id="dynRefId" class="form-control" placeholder="e.g. 5 Days, Online / Offline">
-          </div>
-        `;
-      } else {
-        fieldsHTML = `
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Accomplishment Title / Heading <span class="text-danger">*</span></label>
-            <input type="text" name="Accomplishment Title" id="dynTitle" class="form-control" placeholder="Enter accomplishment title" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Issuing Authority / Awarding Agency <span class="text-danger">*</span></label>
-            <input type="text" name="Issuing Authority" id="dynPublisher" class="form-control" placeholder="Organization name" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Date of Achievement / Event <span class="text-danger">*</span></label>
-            <input type="date" name="Date of Achievement" id="dynDate" class="form-control" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Reference / Registration / Certificate ID</label>
-            <input type="text" name="Reference ID" id="dynRefId" class="form-control" placeholder="Certificate / Ref Number">
-          </div>
-        `;
+      let publisherLabel = "Issuing Body / Publisher / Organization";
+      let publisherPlaceholder = "Organization / Publisher / Institution name";
+
+      let dateLabel = "Date of Event / Achievement / Publication";
+      
+      let refLabel = "Ref No. / Certificate ID / Details";
+      let refPlaceholder = "Certificate No., Scopus status, duration, location, etc.";
+
+      if (cat.includes("Paper") || cat.includes("Book") || cat.includes("Journal") || cat.includes("Case Study") || cat.includes("Patent") || cat.includes("Copyright")) {
+        titleLabel = "Title of Paper / Book / Patent / Copyright";
+        titlePlaceholder = "Enter complete publication or patent title";
+        publisherLabel = "Journal / Publisher / Patent Office";
+        publisherPlaceholder = "Publisher name, ISSN/ISBN, or Patent Office";
+        dateLabel = "Date of Publication / Filing / Award";
+        refLabel = "Indexing Status / Registration / Patent ID";
+        refPlaceholder = "e.g., Scopus Indexed, Web of Science, Patent No.";
+      } else if (cat.includes("FDP") || cat.includes("Workshop") || cat.includes("Conference") || cat.includes("Webinar") || cat.includes("Course") || cat.includes("Conclave") || cat.includes("Seminar") || cat.includes("MDP")) {
+        titleLabel = "Event / Program / Course Title";
+        titlePlaceholder = "Enter program title";
+        publisherLabel = "Organizing Body / Institution / Platform";
+        publisherPlaceholder = "e.g., IIM Bangalore, NPTEL, Coursera, GIBS";
+        dateLabel = "Event Date / Completion Date";
+        refLabel = "Duration / Mode / Location";
+        refPlaceholder = "e.g., 5 Days, Online / Offline, Bangalore";
+      } else if (cat.includes("Award") || cat.includes("Recognition") || cat.includes("Achievement")) {
+        titleLabel = "Award / Recognition Title";
+        titlePlaceholder = "e.g., Best Paper Award, Best Professor, Appreciation";
+        publisherLabel = "Awarding Agency / Government / Institution";
+        publisherPlaceholder = "Name of organization bestowing the award";
+        dateLabel = "Date Received";
+        refLabel = "Certificate / Reference Number";
+        refPlaceholder = "Award Ref No. / Certificate ID";
+      } else if (cat.includes("Qualification") || cat.includes("Marks Cards") || cat.includes("CV") || cat.includes("Letter") || cat.includes("Personal")) {
+        titleLabel = "Document Name / Degree Title";
+        titlePlaceholder = "e.g., Ph.D Degree Certificate, Relieving Letter, CV";
+        publisherLabel = "University / Previous Institution";
+        publisherPlaceholder = "Name of University or Institution";
+        dateLabel = "Issue Date / Year of Completion";
+        refLabel = "Reg No. / Roll No. / Employee ID";
+        refPlaceholder = "Registration No. / Employee ID";
+      } else if (cat.includes("Consultancy") || cat.includes("Project") || cat.includes("Collaboration") || cat.includes("Guidance")) {
+        titleLabel = "Project / Consultancy / Topic Title";
+        titlePlaceholder = "Enter full title or subject";
+        publisherLabel = "Sponsoring / Client Organization / Scholar Name";
+        publisherPlaceholder = "Client Company / Funding Agency / PhD Scholar";
+        dateLabel = "Start Date / Award Date";
+        refLabel = "Grant Amount / Project ID / Reg No.";
+        refPlaceholder = "e.g., Rs. 50,000 / Project Code No.";
       }
 
-      fieldsHTML += `
+      const fieldsHTML = `
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">${titleLabel} <span class="text-danger">*</span></label>
+          <input type="text" name="Title" id="dynTitle" class="form-control" placeholder="${titlePlaceholder}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">${publisherLabel} <span class="text-danger">*</span></label>
+          <input type="text" name="Publisher" id="dynPublisher" class="form-control" placeholder="${publisherPlaceholder}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">${dateLabel} <span class="text-danger">*</span></label>
+          <input type="date" name="Date" id="dynDate" class="form-control" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">${refLabel}</label>
+          <input type="text" name="RefID" id="dynRefId" class="form-control" placeholder="${refPlaceholder}">
+        </div>
         <div class="col-md-12">
-          <label class="form-label fw-semibold">Brief Summary / Additional Remarks</label>
-          <textarea name="Remarks/Summary" id="dynSummary" class="form-control" rows="3" placeholder="Provide key highlights, impact, or summary details..."></textarea>
+          <label class="form-label fw-semibold">Brief Summary / Remarks / Key Highlights</label>
+          <textarea name="Summary" id="dynSummary" class="form-control" rows="3" placeholder="Provide key highlights, impact, or summary details..."></textarea>
         </div>
       `;
 
       container.innerHTML = fieldsHTML;
     }
 
-    // Submit Handler to Apps Script
+    // Submit handler
     document.getElementById('accomplishmentForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -462,29 +471,32 @@
 
       fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
-      .then(() => {
-        alertBox.className = "alert alert-success";
-        alertBox.textContent = "Accomplishment and PDF successfully submitted to Google Sheet!";
-        alertBox.classList.remove('d-none');
-        document.getElementById('accomplishmentForm').reset();
-        updateCategories();
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Accomplishment Details';
+      .then(res => res.json())
+      .then(response => {
+        if (response.result === "success") {
+          alertBox.className = "alert alert-success";
+          alertBox.textContent = "Accomplishment and PDF proof successfully submitted to Google Sheet!";
+          alertBox.classList.remove('d-none');
+          document.getElementById('accomplishmentForm').reset();
+          updateCategories();
+        } else {
+          throw new Error(response.error || "Form submission error");
+        }
       })
       .catch(err => {
         alertBox.className = "alert alert-danger";
-        alertBox.textContent = "Error submitting form. Please try again.";
+        alertBox.textContent = "Error submitting form: " + err.message;
         alertBox.classList.remove('d-none');
+      })
+      .finally(() => {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> Submit Accomplishment Details';
       });
     });
 
-    // Initial setup on load
     window.onload = () => {
       updateCategories();
     };
